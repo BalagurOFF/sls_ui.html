@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href='https://cdn.slsys.io/assets/2023.02.08d1/favicon.png' type="image/x-icon">
+	<link rel="shortcut icon" href='https://cdn.slsys.io/assets/2023.02.08d1/favicon.png' type="image/x-icon">
+	<link href='https://cdn.slsys.io/assets/2023.02.08d1/vendor.css' rel="stylesheet">
+	<link href='https://cdn.slsys.io/assets/2023.02.08d1/main.css' rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+	<!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">-->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+	<script src="https://unpkg.com/vue@3.2.36"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>        
+		html,        body {          height: 100%;        }        
+		body {                  background-color: #eef5f9 !important;        }       
+		.card-group {          background-color:#ffffff;          border-color: #d7dfe3;          border-radius: 4px;          box-shadow: 0px 5px 20px rgba(0,0,0,0.05);        }  
+		.fa { font-size: 23px; }
+		.form-switch {padding-bottom: 7px;}
+		.card-cont {padding-bottom: 15px;}
+		.bages {padding-bottom: 7px;}
+	</style>
+    <title>SLS Gateway</title>
+    
+</head>
+<body>
+
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark" style="background-color: #1e88e5;">
+			<div class="container-fluid">
+				<a class="navbar-brand" href="/">SLS</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+						<li class="nav-item">
+							<a class="nav-link active" aria-current="page" href="/ui">UI</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="/objects">Objects</a>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="dropdown00" role="button" data-bs-toggle="dropdown" aria-expanded="false">Zigbee</a>
+							<ul class="dropdown-menu" aria-labelledby="dropdown00">
+								<li><a class="dropdown-item" href="/zigbee">Devices</a></li>
+								<li><a class="dropdown-item" href="/zigbee/join">Join</a></li>
+								<li><a class="dropdown-item" href="/zigbee/map">Map</a></li>
+								<li><a class="dropdown-item" href="/zigbee/config">Config</a></li>
+								<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#zb_reset_modal" href="#">Reset to Default</a></li>
+								<li><a class="dropdown-item" href="/zigbee/softreset">Soft Reset</a></li>
+								<li><a class="dropdown-item" href="/zigbee/startbsl">Start BSL</a></li>
+							</ul>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="/log">Log</a>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="dropdown01" role="button" data-bs-toggle="dropdown" aria-expanded="false">Settings</a>
+							<ul class="dropdown-menu" aria-labelledby="dropdown01">
+								<li><a class="dropdown-item" href="/settings/network">Network</a></li>
+								<li><a class="dropdown-item" href="/time">Time</a></li>
+								<li><a class="dropdown-item" href="/link">Link</a></li>
+								<li><a class="dropdown-item" href="/serial">Serial</a></li>
+								<li><a class="dropdown-item" href="/services">Services</a></li>
+								<li><a class="dropdown-item" href="/users">Users</a></li>
+								<li><a class="dropdown-item" href="/hw">Hardware</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="dropdown02" role="button" data-bs-toggle="dropdown" aria-expanded="false">Help</a>
+							<ul class="dropdown-menu" aria-labelledby="dropdown02">
+								<li><a class="dropdown-item" href="https://github.com/slsys/Gateway/blob/master/readme.md" target="_blank">GitHub</a></li>
+								<li><a class="dropdown-item" href="https://t.me/slsys" target="_blank">Telegram (Support, discussions)</a></li>
+								<li><a class="dropdown-item" href="https://mjdm.ru/forum/viewtopic.php?t=6700" target="_blank">Forum</a></li>
+								<li><a class="dropdown-item" href="https://slsys.io/action/supported_devices" target="_blank">Supported devices</a></li>
+							</ul>
+						</li>
+
+						
+					</ul>
+					<ul class="navbar-nav mb-2 mb-lg-0">
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="dropdown03" role="button" data-bs-toggle="dropdown" aria-expanded="false">Actions</a>
+							<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown03">
+								<li><a class="dropdown-item" href="/scripts">Files</a></li>
+								<li><a class="dropdown-item" href="/backup">Backup</a></li>
+								<li><a class="dropdown-item" href="/update">Update Firmware</a></li>
+								<li><a class="dropdown-item" href="/save">Save</a></li>
+								<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#reboot_modal" href="#">Reboot System</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+	<!-- Modal Zigbee reset --> 
+	<div class="modal fade" id="zb_reset_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Zigbee reset</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+				</div>
+				<div class="modal-body">
+					Are you sure you want to reset all zigbee devices?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" onclick="location.href='/zigbee/reset';">Reset</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>	
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Modal Reboot --> 
+	<div class="modal fade" id="reboot_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Reboot</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+				</div>
+				<div class="modal-body">
+					Are you sure you want to reboot the device?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" onclick="location.href='/reboot';">Reboot</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>	
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <div class="container-fluid flex-column">
+        <div class="row" id="app">
+			<div class="d-grid gap-2 d-flex justify-content-end mb-2 fs-3">
+				<i @click="saveConfig()" class="bi bi-save-fill text-primary" :class="{'text-warning' : !save}"></i>
+				<i @click="showUI=!showUI" class="bi bi-gear-fill text-primary" :class="{'text-warning' : !showUI}"></i>
+			</div>
+			<template  v-if="showUI">
+				<div class="col-sm-12 col-md-6 col-xxl-4 pb-2" v-for="[room_key, room_value] in rooms"  :key="room_value">
+				<div class="card h-100">
+					<div class="card-header" >
+						<h4 class="text-center">{{ room_key }}</h4>
+					</div>
+					<div class="card-body" >
+						<template v-for="device in devices" :key="device.id">
+							<div v-if="device.room == room_key" class="row pb-2">
+								<div class="col-7 col-sm-8 col-lg-9">
+									{{ device.title }}
+								</div>
+								<div v-if="device.type =='switch'" :ref="device.prop+device.ieee" class="col-5 col-sm-4 col-lg-3 form-check form-switch justify-content-start">								
+									<input @click="changeState(device.ieee, device.prop, $event)" class="form-check-input" type="checkbox" v-model="devices_status[device.prop+device.ieee]" true-value="ON" false-value="OFF"> &nbsp; <!--:checked="devices_status[device.prop+device.ieee] === 'ON'"-->
+									<i :class="[device.icon, { 'text-warning' : devices_status[device.prop+device.ieee] === 'ON'}]"></i>
+								</div>
+								<div v-else-if="device.type =='sensor'" :ref="device.prop+device.ieee" class="col-5 col-sm-4 col-lg-3 form-check form-switch p-0 justify-content-start">
+									{{ devices_status[device.prop+device.ieee] }} {{ device.unit }}
+									<i :class="[device.icon]"></i>
+								</div>
+								<div v-else-if="device.type =='bin-sensor'" :ref="device.prop+device.ieee" class="col-5 col-sm-4 col-lg-3 form-check form-switch p-0 justify-content-start">
+									<template v-if="devices_status[device.prop+device.ieee]">
+										{{ device.true }}&nbsp;
+									</template> 
+									<template v-else-if="devices_status[device.prop+device.ieee]==false">
+										{{ device.false }}&nbsp;
+									</template>
+									<template v-else>
+										Не определено&nbsp;
+									</template>
+									<i :class="[device.icon, { 'text-danger' : devices_status[device.prop+device.ieee] == true}]"></i>
+								</div>
+								<div v-else-if="device.type =='bin-sensor-door'" :ref="device.prop+device.ieee" class="col-5 col-sm-4 col-lg-3 form-check form-switch p-0 justify-content-start">
+									<template v-if="devices_status[device.prop+device.ieee]">
+										{{ device.true }}&nbsp;
+									</template> 
+									<template v-else-if="devices_status[device.prop+device.ieee]==false">
+										{{ device.false }}&nbsp;
+									</template>
+
+									<template v-else>
+										Не определено&nbsp;
+									</template>
+									<i :class="[device.icon, { 'bi-door-closed-fill' : devices_status[device.prop+device.ieee] == true}, { 'bi-door-open-fill text-warning' : devices_status[device.prop+device.ieee] == false}]"></i>
+								</div>
+							</div>
+							
+						</template>
+					</div>
+				</div>
+				</div>
+			</template>
+			<template v-else>
+				<div class="col-12">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+							  	<th scope="col">ID</th>
+								<th scope="col">Комната</th>
+							  	<th scope="col">Устроуйство</th>
+							  	<th scope="col">Состояния</th>
+							  	<th scope="col">Описание</th>
+							  	<th scope="col">Тип</th>
+							  	<th scope="col">Иконка</th>
+							  	<th scope="col">Значение true</th>
+							  	<th scope="col">Значение false</th>
+							</tr>
+						</thead>
+						<tbody >
+							<tr v-for="device in devices" :key="device.id">
+							  	<th scope="row">{{device.id}}</th>
+								<td>{{device.room}}</td>
+							  	<td>{{device.ieee}}</td>
+							  	<td>{{device.prop}}</td>
+							  	<td>{{device.title}}</td>
+								<td>{{device.type}}</td>
+							  	<td>{{device.icon}}</td>
+							  	<td>{{device.true}}</td>
+								<td>{{device.false}}</td>
+								<td>{{device.unit}}</td>
+							  	<td><i class="bi bi-trash3-fill" @click="removeDevice(device.id)"></i>&nbsp;<i class="bi bi-wrench" @click="formFilling(device.id)"></i></td>
+							</tr>
+							<tr>
+								<th scope="row"><input type="text" size="1" disabled v-model="config_device.id"></th>
+								<td><input type="text" size="10" list="rooms" v-model="config_device.room" title="Название карточки (комнаты). Можно ввести вручную или можно выбрать из раннее введеных"></td>
+								<td><input type="text" size="20" list="devices" v-model="config_device.ieee" title="Выбирается из спаренных устройств"></td>
+								<td><input type="text" size="10" list="states" v-model="config_device.prop" title="Выбирается из свойств устройства"></td>
+								<td><input type="text" size="20" v-model="config_device.title" title="название свойства устройства, которое будет отображатся в интерфейсе"></td>
+								<td><input type="text" size="10" list="types" v-model="config_device.type" title="Тип устройства. Пока только переключатель (switch), бинарный сенсор (bin-sensor), бинарный сенсор - дверь (bin-sensor-door) и сенсор отображающий значение с устройства"></td>
+								<td><input type="text" size="20" v-model="config_device.icon" title="Иконки. Брать с https://icons.getbootstrap.com/"></td>
+								<td><input type="text" size="10" v-model="config_device.true" title="Отображаемое значение, когда бинарный сенсор активирован."></td>
+								<td><input type="text" size="10" v-model="config_device.false" title="Отображаемое значение, когда бинарный сенсор деактивирован."></td>
+								<td><input type="text" size="5" v-model="config_device.unit" title="Отображаемые единицы измерения"></td>
+								<td><i class="bi bi-plus-square-fill" @click="addDevice()"></i>&nbsp;<i class="bi bi-x-square-fill" @click="formClear()"></i></td>
+							</tr>
+						</tbody>
+					</table>
+					<datalist id="rooms" >
+						<option v-for="[room_key, room_value] in rooms"  :key="room_value">{{room_key}}</option>
+					</datalist>
+					<datalist id="devices" >
+						<option v-for="device in devicesZigbee"  :key="device.nwkAddr" :value="device.ieeeAddr">{{device.friendly_name}}</option>
+					</datalist>
+					<datalist id="states" v-if="config_device.ieee">
+						<option v-for="(item, index) in search_state(config_device.ieee)" :key="index">{{index}}</option>
+					</datalist>
+					<datalist id="types" >
+						<option >bin-sensor</option>
+						<option >bin-sensor-door</option>
+						<option >sensor</option>
+						<option >switch</option>
+					</datalist>
+				</div>
+			</template>
+		</div>
+    </div>
+
+    <script>
+        const App = {
+            data() {
+                return {
+					rooms: [],
+					devices_status: {},
+					devices: [],
+					showUI: true,
+					devicesZigbee: null,
+					config_device: {},
+					save: true,
+					idClear: null,
+                }
+            },
+			
+			computed: {
+				
+			},
+
+			methods: {
+				initialDevices(){
+					fetch("http://192.168.1.10/api/storage?path=uiconfig.json", {  //"http://"+window.location.hostname+"/api/zigbee/devices", {
+						method: 'GET',
+					})
+        				.then(response => response.json())
+						.then(data => {
+							console.log("initial Devices")
+							this.devices = data.devices
+							console.log("initial Rooms")
+							var rooms = new Map()
+							var id = []
+							var count = 1
+							data.devices.forEach((device) => {
+								id.push(device.id)
+        						if (!rooms.has(device.room)) {
+									rooms.set(device.room, count++);
+        						}
+      						})
+							console.log(rooms)
+							this.rooms = rooms
+							console.log(id)
+							console.log(Math.max(...id))
+							this.config_device['id'] = Math.max(...id)+1
+							this.idClear = Math.max(...id)+1
+							
+						})
+				},
+				wschangeState(data) {
+					var dev = this.devices.find((item=>(item.ieee == data.payload.ieeeAddr && item.prop == data.payload.name)))
+					if (dev) {
+						var device = data.payload.name+data.payload.ieeeAddr
+						this.devices_status[device] = data.payload.value
+					}
+					console.log(this.devices_status)
+				},
+				initialZigbee() {
+					console.log("initialZigbee")
+					fetch("http://"+window.location.hostname+"/api/zigbee/devices", {
+						method: 'GET',
+					})
+        				.then(response => response.json())
+						.then(data => {
+							console.log(data)
+							this.devicesZigbee = data
+							this.devices.forEach(element => {
+								var device = data.find(item=>(item.ieeeAddr == element.ieee))
+								var device_name = element.prop + element.ieee
+								this.devices_status[device_name] =  device.st[element.prop]
+								console.log("Устройство: "+device.ieeeAddr+device.st[element.prop])
+							}
+							)
+						}
+						)
+				},
+
+				changeState(ieee, prop, e){
+					console.log("change State device "+ieee+' '+prop)
+					var value_state = e.target.checked ? 'ON' : 'OFF' //this.devices_status[prop+ieee]
+					console.log(e.target.checked)
+					fetch("http://"+window.location.hostname+"/api/zigbee?dev="+ieee+"&action=setState&name="+prop+"&value="+value_state, {
+						method: 'GET',
+					})
+				},	
+				search_state(ieee){
+					//console.log("Search state: "+ieee)
+					var state = this.devicesZigbee.find( item => item.ieeeAddr === ieee)
+					console.log(state.st)
+					return state.st
+					//this.config_device.prop = state
+				},	
+
+				formFilling(id){
+					var device = this.devices.find(item => item.id === id)
+					this.config_device = device
+				}, 
+
+				removeDevice(id){
+					this.devices = this.devices.filter(item => item.id != id)
+					this.save = false
+				}, 
+
+				addDevice(){
+					if (this.devices.includes(this.config_device)) {
+						console.log("Замена устройства")
+						this.removeDevice(this.config_device['id'])
+					}
+					
+					console.log("Добавление устройства")
+					this.idClear = this.config_device['id']+1
+					this.devices.push(this.config_device)
+					this.formClear()
+					this.save = false
+				},
+				formClear(){
+					this.config_device = {}
+					this.config_device['id'] = this.idClear
+				},
+
+				saveConfig(){
+					var text = new Map()
+					text['devices'] = this.devices
+					console.log(JSON.stringify(text))
+					fetch("http://"+window.location.hostname+"/api/storage?path=/uiconfig.json&plain="+JSON.stringify(text).replaceAll("%", "%25"), {
+						method: 'POST',
+					})
+        				.then(response => response.json())
+						.then(data => this.save = data.success)
+				}
+			},
+
+			mounted(){
+      			let connection = new WebSocket("ws://"+window.location.hostname+":81/log")
+				connection.binaryType = 'blob'
+      			connection.onmessage = (message) => {
+					const data = JSON.parse(message.data)
+					this.wschangeState(data)
+					//console.log(data)
+      				}
+
+				connection.onopen = (message) => {
+    				console.log('Connection opened (WebSocket)')
+				//	this.initialRooms()
+					this.initialDevices()
+					this.initialZigbee()
+					connection.send(JSON.stringify({
+        				action: 'subscribe',
+        				category: 'zigbee',
+      					}));
+					}
+
+				connection.onclose = (message) => {
+    				console.log('Connection closed (WebSocket)')
+					}
+    		}
+		}
+        Vue.createApp(App).mount('#app') 
+    </script>
+</body>
+</html>
