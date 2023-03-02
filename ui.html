@@ -197,33 +197,37 @@
 					<table class="table table-striped">
 						<thead>
 							<tr>
-							  	<th scope="col">ID</th>
-								<th scope="col">Комната</th>
-							  	<th scope="col">Устроуйство</th>
-							  	<th scope="col">Состояния</th>
-							  	<th scope="col">Описание</th>
-							  	<th scope="col">Тип</th>
-							  	<th scope="col">Иконка</th>
-							  	<th scope="col">Значение true</th>
-							  	<th scope="col">Значение false</th>
-								<th scope="col">Единица измерения</th>
-								<th scope="col"></th>
+							  	<th >ID</th>
+								<th class="d-none d-lg-table-cell">Комната</th>
+							  	<th >Устроуйство</th>
+							  	<th class="d-none d-sm-table-cell">Состояния</th>
+							  	<th class="d-none d-md-table-cell">Описание</th>
+							  	<th class="d-none d-lg-table-cell">Тип</th>
+							  	<th class="d-none d-xl-table-cell">Иконка</th>
+							  	<th class="d-none d-xl-table-cell">Значение true</th>
+							  	<th class="d-none d-xl-table-cell">Значение false</th>
+								<th class="d-none d-xl-table-cell">Единица измерения</th>
+								<th ></th>
 							</tr>
 						</thead>
 						<tbody >
 							<tr v-for="device in devices" :key="device.id">
-							  	<th scope="row">{{device.id}}</th>
-								<td>{{device.room}}</td>
+							  	<th scope="row" >{{device.id}}</th>
+								<td class="d-none d-lg-table-cell">{{device.room}}</td>
 							  	<td>{{device.ieee}}</td>
-							  	<td>{{device.prop}}</td>
-							  	<td>{{device.title}}</td>
-								<td>{{device.type}}</td>
-							  	<td>{{device.icon}}</td>
-							  	<td>{{device.true}}</td>
-								<td>{{device.false}}</td>
-								<td>{{device.unit}}</td>
+							  	<td class="d-none d-sm-table-cell">{{device.prop}}</td>
+							  	<td class="d-none d-md-table-cell">{{device.title}}</td>
+								<td class="d-none d-lg-table-cell">{{device.type}}</td>
+							  	<td class="d-none d-xl-table-cell">{{device.icon}}</td>
+							  	<td class="d-none d-xl-table-cell">{{device.true}}</td>
+								<td class="d-none d-xl-table-cell">{{device.false}}</td>
+								<td class="d-none d-xl-table-cell">{{device.unit}}</td>
 							  	<td><i class="bi bi-trash3-fill" @click="removeDevice(device.id)"></i>&nbsp;<i class="bi bi-wrench" @click="formFilling(device.id)"></i></td>
 							</tr>
+						</tbody>
+					</table>
+					<!--<table class="table table-striped">
+						<tbody >
 							<tr>
 								<th scope="row"><input type="text" size="1" disabled v-model="config_device.id"></th>
 								<td><input type="text" size="10" list="rooms" v-model="config_device.room" title="Название карточки (комнаты). Можно ввести вручную или можно выбрать из раннее введеных"></td>
@@ -238,7 +242,7 @@
 								<td><i class="bi bi-plus-square-fill" @click="addDevice()"></i>&nbsp;<i class="bi bi-x-square-fill" @click="formClear()"></i></td>
 							</tr>
 						</tbody>
-					</table>
+					</table>-->
 					<datalist id="rooms" >
 						<option v-for="[room_key, room_value] in rooms"  :key="room_value">{{room_key}}</option>
 					</datalist>
@@ -271,6 +275,7 @@
 					config_device: {},
 					save: true,
 					idClear: null,
+					ipSLS: "192.168.1.10"
                 }
             },
 			
@@ -280,7 +285,7 @@
 
 			methods: {
 				initialDevices(){
-					fetch("http://"+window.location.hostname+"/api/zigbee/devices", {
+					fetch("http://"+this.ipSLS+"/api/storage?path=uiconfig.json", {
 						method: 'GET',
 					})
         				.then(response => response.json())
@@ -316,7 +321,7 @@
 				},
 				initialZigbee() {
 					console.log("initialZigbee")
-					fetch("http://"+window.location.hostname+"/api/zigbee/devices", {
+					fetch("http://"+this.ipSLS+"/api/zigbee/devices", {
 						method: 'GET',
 					})
         				.then(response => response.json())
@@ -338,7 +343,7 @@
 					console.log("change State device "+ieee+' '+prop)
 					var value_state = e.target.checked ? 'ON' : 'OFF' //this.devices_status[prop+ieee]
 					console.log(e.target.checked)
-					fetch("http://"+window.location.hostname+"/api/zigbee?dev="+ieee+"&action=setState&name="+prop+"&value="+value_state, {
+					fetch("http://"+this.ipSLS+"/api/zigbee?dev="+ieee+"&action=setState&name="+prop+"&value="+value_state, {
 						method: 'GET',
 					})
 				},	
@@ -381,7 +386,7 @@
 					var text = new Map()
 					text['devices'] = this.devices
 					console.log(JSON.stringify(text))
-					fetch("http://"+window.location.hostname+"/api/storage?path=/uiconfig.json&plain="+JSON.stringify(text).replaceAll("%", "%25"), {
+					fetch("http://"+this.ipSLS+"/api/storage?path=/uiconfig.json&plain="+JSON.stringify(text).replaceAll("%", "%25"), {
 						method: 'POST',
 					})
         				.then(response => response.json())
@@ -390,7 +395,7 @@
 			},
 
 			mounted(){
-      			let connection = new WebSocket("ws://"+window.location.hostname+":81/log")
+      			let connection = new WebSocket("ws://"+this.ipSLS+":81/log")
 				connection.binaryType = 'blob'
       			connection.onmessage = (message) => {
 					const data = JSON.parse(message.data)
