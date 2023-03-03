@@ -197,6 +197,7 @@
 					<table class="table table-striped">
 						<thead>
 							<tr>
+<<<<<<< HEAD
 							  	<th scope="col">ID</th>
 								<th scope="col">Комната</th>
 							  	<th scope="col">Устроуйство</th>
@@ -208,23 +209,36 @@
 							  	<th scope="col">Значение false</th>
 								<th scope="col">Единица измерения</th>
 								<th scope="col"></th>
+=======
+							  	<th >ID</th>
+								<th class="d-none d-lg-table-cell">Комната</th>
+							  	<th >Устроуйство</th>
+							  	<th class="d-none d-sm-table-cell">Состояния</th>
+							  	<th class="d-none d-md-table-cell">Описание</th>
+							  	<th class="d-none d-lg-table-cell">Тип</th>
+							  	<th class="d-none d-xl-table-cell">Иконка</th>
+							  	<th class="d-none d-xl-table-cell">Значение true</th>
+							  	<th class="d-none d-xl-table-cell">Значение false</th>
+								<th class="d-none d-xl-table-cell">Единица измерения</th>
+								<th ></th>
+>>>>>>> de862103283edf81253e5c611db7b0791df87bf6
 							</tr>
 						</thead>
 						<tbody >
 							<tr v-for="device in devices" :key="device.id">
-							  	<th scope="row">{{device.id}}</th>
-								<td>{{device.room}}</td>
+							  	<th scope="row" >{{device.id}}</th>
+								<td class="d-none d-lg-table-cell">{{device.room}}</td>
 							  	<td>{{device.ieee}}</td>
-							  	<td>{{device.prop}}</td>
-							  	<td>{{device.title}}</td>
-								<td>{{device.type}}</td>
-							  	<td>{{device.icon}}</td>
-							  	<td>{{device.true}}</td>
-								<td>{{device.false}}</td>
-								<td>{{device.unit}}</td>
+							  	<td class="d-none d-sm-table-cell">{{device.prop}}</td>
+							  	<td class="d-none d-md-table-cell">{{device.title}}</td>
+								<td class="d-none d-lg-table-cell">{{device.type}}</td>
+							  	<td class="d-none d-xl-table-cell">{{device.icon}}</td>
+							  	<td class="d-none d-xl-table-cell">{{device.true}}</td>
+								<td class="d-none d-xl-table-cell">{{device.false}}</td>
+								<td class="d-none d-xl-table-cell">{{device.unit}}</td>
 							  	<td><i class="bi bi-trash3-fill" @click="removeDevice(device.id)"></i>&nbsp;<i class="bi bi-wrench" @click="formFilling(device.id)"></i></td>
 							</tr>
-							<tr>
+							<tr v-if="screenSize()">
 								<th scope="row"><input type="text" size="1" disabled v-model="config_device.id"></th>
 								<td><input type="text" size="10" list="rooms" v-model="config_device.room" title="Название карточки (комнаты). Можно ввести вручную или можно выбрать из раннее введеных"></td>
 								<td><input type="text" size="20" list="devices" v-model="config_device.ieee" title="Выбирается из спаренных устройств"></td>
@@ -239,6 +253,97 @@
 							</tr>
 						</tbody>
 					</table>
+					
+					<template v-if="!screenSize()">
+						<div class="col-12 align-items-center">
+							<form>
+								<div class="row pt-2">
+									<div class="col-5">
+										<label for="config_device.id" class="d-xl-none col-form-label">ID:</label>
+									</div>
+									<div class="col-7">
+										<input type="text" size="1" class="form-control" disabled id="config_device.id" aria-describedby="config_device.id" v-model="config_device.id" title="ID выставляется автоматически">
+									</div>
+								</div>
+								<div class="row pt-2">
+									<div class="col-5">
+										<label for="config_device.room" class="d-xl-none col-form-label">Комната: </label>
+									</div>
+									<div class="col-7">
+										<input type="text" size="10" class="form-control" id="config_device.room" aria-describedby="config_device.room" list="rooms" v-model="config_device.room" title="Название карточки (комнаты). Можно ввести вручную или можно выбрать из раннее введеных">
+									</div>
+								</div>
+								<div class="row pt-2">
+									<div class="col-5">
+										<label for="config_device.ieee" class="d-xl-none col-form-label">Устройство: </label>
+									</div>
+									<div class="col-7">
+										<input type="text" size="20" class="form-control" id="config_device.ieee" aria-describedby="config_device.ieee" list="devices" v-model="config_device.ieee" title="Выбирается из спаренных устройств">
+									</div>
+								</div>
+								<div class="row pt-2">
+									<div class="col-5">
+										<label for="config_device.prop" class="d-xl-none col-form-label">Состояние: </label>
+									</div>
+									<div class="col-7">
+										<input type="text" size="10" class="form-control" id="config_device.prop" aria-describedby="config_device.prop" list="states" v-model="config_device.prop" title="Выбирается из свойств устройства">
+									</div>
+								</div>
+								<div class="row pt-2">
+									<div class="col-5">
+										<label for="config_device.title" class="d-xl-none col-form-label">Описание: </label>
+									</div>
+									<div class="col-7">
+										<input type="text" size="20" class="form-control" id="config_device.title" aria-describedby="config_device.title" v-model="config_device.title" title="Название свойства устройства, которое будет отображатся в интерфейсе">
+									</div>
+								</div>	
+								<div class="row pt-2">
+									<div class="col-5">
+										<label for="config_device.type" class="d-xl-none col-form-label">Тип: </label>
+									</div>
+									<div class="col-7">
+										<input type="text" size="10" class="form-control" id="config_device.type" aria-describedby="config_device.type" list="types" v-model="config_device.type" title="Тип устройства. Пока только переключатель (switch), бинарный сенсор (bin-sensor), бинарный сенсор - дверь (bin-sensor-door) и сенсор отображающий значение с устройства">
+									</div>
+								</div>
+								<div class="row pt-2">
+									<div class="col-5">
+										<label for="config_device.icon" class="d-xl-none col-form-label">Иконка: </label>
+									</div>
+									<div class="col-7">
+										<input type="text" size="20" class="form-control" id="config_device.icon" aria-describedby="config_device.icon" v-model="config_device.icon" title="Иконки. Брать с https://icons.getbootstrap.com/">
+									</div>
+								</div>	
+								<div class="row pt-2">
+									<div class="col-5">
+										<label for="config_device.true" class="d-xl-none col-form-label">Значение true: </label>
+									</div>
+									<div class="col-7">
+										<input type="text" size="10" class="form-control" id="config_device.true" aria-describedby="config_device.true" v-model="config_device.true" title="Отображаемое значение, когда бинарный сенсор активирован">
+									</div>
+								</div>	
+								<div class="row pt-2">
+									<div class="col-5">
+										<label for="config_device.false" class="d-xl-none col-form-label">Значение false: </label>
+									</div>
+									<div class="col-7">
+										<input type="text" size="10" class="form-control" id="config_device.false" aria-describedby="config_device.false" v-model="config_device.false" title="Отображаемое значение, когда бинарный сенсор деактивирован">
+									</div>
+								</div>	
+								<div class="row pt-2">
+									<div class="col-5">
+										<label for="config_device.unit" class="d-xl-none col-form-label">Единица измерения: </label>
+									</div>
+									<div class="col-7">
+										<input type="text" size="5" class="form-control" id="config_device.unit" aria-describedby="config_device.id" v-model="config_device.unit" title="Отображаемые единицы измерения">
+									</div>
+								</div>
+							</form>
+							<div class="pt-2 col-4 mx-auto" >
+								<button type="button" class="btn btn-primary me-2" @click="addDevice()">Добавить</button>
+								<button type="button" class="btn btn-primary" @click="formClear()">Очистить</button>
+							</div>
+						</div>
+					</template>
 					<datalist id="rooms" >
 						<option v-for="[room_key, room_value] in rooms"  :key="room_value">{{room_key}}</option>
 					</datalist>
@@ -271,8 +376,15 @@
 					config_device: {},
 					save: true,
 					idClear: null,
+					ipSLS: "192.168.1.10",
+					width: 0,
                 }
             },
+
+			created() {
+				window.addEventListener('resize', this.updateWidth)
+				this.updateWidth()
+			},
 			
 			computed: {
 				
@@ -280,7 +392,7 @@
 
 			methods: {
 				initialDevices(){
-					fetch("http://"+window.location.hostname+"/api/zigbee/devices", {
+					fetch("http://"+this.ipSLS+"/api/storage?path=uiconfig.json", {
 						method: 'GET',
 					})
         				.then(response => response.json())
@@ -316,7 +428,7 @@
 				},
 				initialZigbee() {
 					console.log("initialZigbee")
-					fetch("http://"+window.location.hostname+"/api/zigbee/devices", {
+					fetch("http://"+this.ipSLS+"/api/zigbee/devices", {
 						method: 'GET',
 					})
         				.then(response => response.json())
@@ -338,7 +450,7 @@
 					console.log("change State device "+ieee+' '+prop)
 					var value_state = e.target.checked ? 'ON' : 'OFF' //this.devices_status[prop+ieee]
 					console.log(e.target.checked)
-					fetch("http://"+window.location.hostname+"/api/zigbee?dev="+ieee+"&action=setState&name="+prop+"&value="+value_state, {
+					fetch("http://"+this.ipSLS+"/api/zigbee?dev="+ieee+"&action=setState&name="+prop+"&value="+value_state, {
 						method: 'GET',
 					})
 				},	
@@ -381,16 +493,29 @@
 					var text = new Map()
 					text['devices'] = this.devices
 					console.log(JSON.stringify(text))
-					fetch("http://"+window.location.hostname+"/api/storage?path=/uiconfig.json&plain="+JSON.stringify(text).replaceAll("%", "%25"), {
+					fetch("http://"+this.ipSLS+"/api/storage?path=/uiconfig.json&plain="+JSON.stringify(text).replaceAll("%", "%25"), {
 						method: 'POST',
 					})
         				.then(response => response.json())
 						.then(data => this.save = data.success)
-				}
+				},
+
+				updateWidth() {
+    				this.width = window.innerWidth;
+  				},
+				  screenSize(){
+					if (this.width>=1200){
+						return true
+					}
+					else {
+						return false
+					}
+				  },
 			},
 
 			mounted(){
-      			let connection = new WebSocket("ws://"+window.location.hostname+":81/log")
+				window.addEventListener('resize', this.updateWidth)
+      			let connection = new WebSocket("ws://"+this.ipSLS+":81/log")
 				connection.binaryType = 'blob'
       			connection.onmessage = (message) => {
 					const data = JSON.parse(message.data)
@@ -412,9 +537,9 @@
 				connection.onclose = (message) => {
     				console.log('Connection closed (WebSocket)')
 					}
-    		}
+    		},
+
 		}
         Vue.createApp(App).mount('#app') 
     </script>
-</body>
-</html>
+</body></html>
