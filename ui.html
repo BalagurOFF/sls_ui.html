@@ -194,7 +194,7 @@
 			</template>
 			<template v-else>
 				<div class="col-12">
-					<table class="table table-striped">
+					<table class="table table-sm table-striped">
 						<thead>
 							<tr>
 							  	<th >ID</th>
@@ -207,7 +207,7 @@
 							  	<th class="d-none d-xl-table-cell">Значение true</th>
 							  	<th class="d-none d-xl-table-cell">Значение false</th>
 								<th class="d-none d-xl-table-cell">Единица измерения</th>
-								<th ></th>
+								<th width="50"></th>
 
 							</tr>
 						</thead>
@@ -223,20 +223,20 @@
 							  	<td class="d-none d-xl-table-cell">{{device.true}}</td>
 								<td class="d-none d-xl-table-cell">{{device.false}}</td>
 								<td class="d-none d-xl-table-cell">{{device.unit}}</td>
-							  	<td><i class="bi bi-trash3-fill" @click="removeDevice(device.id)"></i>&nbsp;<i class="bi bi-wrench" @click="formFilling(device.id)"></i></td>
+							  	<td width="50"><i class="bi bi-trash3-fill" @click="removeDevice(device.id)"></i>&nbsp;<i class="bi bi-wrench" @click="formFilling(device.id)"></i></td>
 							</tr>
 							<tr v-if="screenSize()">
-								<th scope="row"><input type="text" size="1" disabled v-model="config_device.id"></th>
-								<td><input type="text" size="10" list="rooms" v-model="config_device.room" title="Название карточки (комнаты). Можно ввести вручную или можно выбрать из раннее введеных"></td>
-								<td><input type="text" size="20" list="devices" v-model="config_device.ieee" title="Выбирается из спаренных устройств"></td>
-								<td><input type="text" size="10" list="states" v-model="config_device.prop" title="Выбирается из свойств устройства"></td>
-								<td><input type="text" size="20" v-model="config_device.title" title="название свойства устройства, которое будет отображатся в интерфейсе"></td>
-								<td><input type="text" size="10" list="types" v-model="config_device.type" title="Тип устройства. Пока только переключатель (switch), бинарный сенсор (bin-sensor), бинарный сенсор - дверь (bin-sensor-door) и сенсор отображающий значение с устройства"></td>
-								<td><input type="text" size="20" v-model="config_device.icon" title="Иконки. Брать с https://icons.getbootstrap.com/"></td>
-								<td><input type="text" size="10" v-model="config_device.true" title="Отображаемое значение, когда бинарный сенсор активирован."></td>
-								<td><input type="text" size="10" v-model="config_device.false" title="Отображаемое значение, когда бинарный сенсор деактивирован."></td>
-								<td><input type="text" size="5" v-model="config_device.unit" title="Отображаемые единицы измерения"></td>
-								<td><i class="bi bi-plus-square-fill" @click="addDevice()"></i>&nbsp;<i class="bi bi-x-square-fill" @click="formClear()"></i></td>
+								<th scope="row"><input class="form-control form-control-sm" size="1" type="text" disabled v-model="config_device.id"></th>
+								<td><input type="text" class="form-control form-control-sm" list="rooms" v-model="config_device.room" title="Название карточки (комнаты). Можно ввести вручную или можно выбрать из раннее введеных"></td>
+								<td><input type="text" class="form-control form-control-sm" list="devices" v-model="config_device.ieee" title="Выбирается из спаренных устройств"></td>
+								<td><input type="text" class="form-control form-control-sm" list="states" v-model="config_device.prop" title="Выбирается из свойств устройства"></td>
+								<td><input type="text" class="form-control form-control-sm" v-model="config_device.title" title="название свойства устройства, которое будет отображатся в интерфейсе"></td>
+								<td><input type="text" class="form-control form-control-sm" list="types" v-model="config_device.type" title="Тип устройства. Пока только переключатель (switch), бинарный сенсор (bin-sensor), бинарный сенсор - дверь (bin-sensor-door) и сенсор отображающий значение с устройства"></td>
+								<td><input type="text" class="form-control form-control-sm" v-model="config_device.icon" title="Иконки. Брать с https://icons.getbootstrap.com/"></td>
+								<td><input type="text" class="form-control form-control-sm" v-model="config_device.true" title="Отображаемое значение, когда бинарный сенсор активирован."></td>
+								<td><input type="text" class="form-control form-control-sm" v-model="config_device.false" title="Отображаемое значение, когда бинарный сенсор деактивирован."></td>
+								<td><input type="text" class="form-control form-control-sm" v-model="config_device.unit" title="Отображаемые единицы измерения"></td>
+								<td width="50"><i class="bi bi-plus-square-fill" @click="addDevice()"></i>&nbsp;<i class="bi bi-x-square-fill" @click="formClear()"></i></td>
 							</tr>
 						</tbody>
 					</table>
