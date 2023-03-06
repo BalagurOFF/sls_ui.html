@@ -240,7 +240,7 @@
 							</tr>
 						</tbody>
 					</table>
-					
+
 					<template v-if="!screenSize()">
 						<div class="col-12 align-items-center">
 							<form>
@@ -341,10 +341,10 @@
 						<option v-for="(item, index) in search_state(config_device.ieee)" :key="index">{{index}}</option>
 					</datalist>
 					<datalist id="types" >
-						<option >bin-sensor</option>
-						<option >bin-sensor-door</option>
-						<option >sensor</option>
-						<option >switch</option>
+						<option value="bin-sensor">bin-sensor</option>
+						<option value="bin-sensor-door">bin-sensor-door</option>
+						<option value="sensor">sensor</option>
+						<option value="switch">switch</option>
 					</datalist>
 				</div>
 			</template>
@@ -363,7 +363,7 @@
 					config_device: {"id":"1"},
 					save: true,
 					idClear: null,
-					ipSLS: window.location.hostname ,//"192.168.1.10",
+					ipSLS: window.location.hostname, //"192.168.1.10"
 					width: 0,
                 }
             },
@@ -384,25 +384,33 @@
 					})
         				.then(response => response.json())
 						.then(data => {
-							console.log("initial Devices")
-							this.devices = data.devices
-							console.log("initial Rooms")
-							var rooms = new Map()
-							var id = []
-							var count = 1
-							data.devices.forEach((device) => {
-								id.push(device.id)
-        						if (!rooms.has(device.room)) {
-									rooms.set(device.room, count++);
-        						}
-      						})
-							console.log(rooms)
-							this.rooms = rooms
-							console.log(id)
-							console.log(Math.max(...id))
-							this.config_device['id'] = Math.max(...id)+1
-							this.idClear = Math.max(...id)+1
-							
+							console.log(data.devices.length)
+							if (data.devices.length>0) {
+								console.log("initial Devices")
+								this.devices = data.devices
+								console.log("initial Rooms")
+								var rooms = new Map()
+								var id = []
+								var count = 1
+								data.devices.forEach((device) => {
+									id.push(device.id)
+        							if (!rooms.has(device.room)) {
+										rooms.set(device.room, count++);
+        							}
+      							})
+								console.log(rooms)
+								this.rooms = rooms
+								console.log(id)
+								console.log(Math.max(...id))
+								this.config_device['id'] = Math.max(...id)+1
+								this.idClear = Number(Math.max(...id))+1
+							}
+							else {
+								console.log("Empty list devices")
+								this.devices = []
+								this.rooms = []
+
+							}
 						})
 				},
 				wschangeState(data) {
@@ -466,7 +474,7 @@
 					}
 					
 					console.log("Добавление устройства")
-					this.idClear = this.config_device['id']+1
+					this.idClear = Number(this.config_device['id'])+1
 					this.devices.push(this.config_device)
 					this.formClear()
 					this.save = false
