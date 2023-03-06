@@ -450,11 +450,13 @@
 					if (type == "switch") {
 						var value_state = e.target.checked ? 'ON' : 'OFF' //this.devices_status[prop+ieee]
 						console.log(e.target.checked)
-					}
-					else {
+					} else if (type == "dimmer") {
 						console.log(e.target.value)
 						var value_state = e.target.value
 						//var value_state = e
+					} else {
+						console.log("Оборудование не определено")
+						console.log(e.target.value)
 					}
 
 					fetch("http://"+this.ipSLS+"/api/zigbee?dev="+ieee+"&action=setState&name="+prop+"&value="+value_state, {
