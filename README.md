@@ -1,5 +1,7 @@
 <h1>Web-интерфейс для SLS Gateway</h1>
 <img src="ui.html.jpg">
+<img src="ui.html_1.jpg">
+<img src="ui.html_config.jpg">
 Интерфейс написан с помощью VueJS 3 и Bootstrap 5.
 
 Иконки для интерфейса берутся из https://icons.getbootstrap.com/.
