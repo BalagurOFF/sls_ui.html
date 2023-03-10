@@ -26,8 +26,8 @@
     
 </head>
 <body>
-
-    <nav class="navbar fixed-top navbar-expand-lg navbar-dark" style="background-color: #1e88e5;">
+	<div id="app">
+    	<nav class="navbar fixed-top navbar-expand-lg navbar-dark" style="background-color: #1e88e5;">
 			<div class="container-fluid">
 				<a class="navbar-brand" href="/">SLS</a>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
@@ -135,7 +135,7 @@
 	</div>
 
     <div class="container-fluid flex-column">
-        <div class="row" id="app">
+		<div class="row">
 			<div class="d-grid gap-2 d-flex justify-content-end mb-2 fs-3">
 				<i @click="saveConfig()" class="bi bi-save-fill text-primary" :class="{'text-warning' : !save}"></i>
 				<i @click="showUI=!showUI" class="bi bi-gear-fill text-primary" :class="{'text-warning' : !showUI}"></i>
@@ -153,7 +153,7 @@
 									{{ device.title }}
 								</div>
 								<div v-if="device.type =='switch'" :ref="device.prop+device.ieee" class="col-5 col-sm-4 col-lg-3 form-check form-switch justify-content-start">								
-									<input @click="changeState(device.ieee, device.prop, $event)" class="form-check-input" type="checkbox" v-model="devices_status[device.prop+device.ieee]" true-value="ON" false-value="OFF"> &nbsp; <!--:checked="devices_status[device.prop+device.ieee] === 'ON'"-->
+									<input @click="changeState(device.ieee, device.prop, 'switch', $event)" class="form-check-input" type="checkbox" v-model="devices_status[device.prop+device.ieee]" true-value="ON" false-value="OFF"> &nbsp; <!--:checked="devices_status[device.prop+device.ieee] === 'ON'"-->
 									<i :class="[device.icon, { 'text-warning' : devices_status[device.prop+device.ieee] === 'ON'}]"></i>
 								</div>
 								<div v-else-if="device.type =='sensor'" :ref="device.prop+device.ieee" class="col-5 col-sm-4 col-lg-3 form-check form-switch p-0 justify-content-start">
@@ -184,6 +184,9 @@
 										Не определено&nbsp;
 									</template>
 									<i :class="[device.icon, { 'bi-door-closed-fill' : devices_status[device.prop+device.ieee] == true}, { 'bi-door-open-fill text-warning' : devices_status[device.prop+device.ieee] == false}]"></i>
+								</div>
+								<div v-else-if="device.type =='dimmer'" :ref="device.prop+device.ieee" class="col-5 col-sm-4 col-lg-3 form-check form-switch p-0 justify-content-start">
+									<input type="range" @change="changeState(device.ieee, device.prop, 'dimmer', $event)" :min="device.false" :max="device[true]" class="form-range" v-model="devices_status[device.prop+device.ieee]" >
 								</div>
 							</div>
 							
@@ -345,9 +348,11 @@
 						<option value="bin-sensor-door">bin-sensor-door</option>
 						<option value="sensor">sensor</option>
 						<option value="switch">switch</option>
+						<option value="dimmer">dimmer</option>
 					</datalist>
 				</div>
 			</template>
+		</div>
 		</div>
     </div>
 
@@ -363,7 +368,7 @@
 					config_device: {"id":"1"},
 					save: true,
 					idClear: null,
-					ipSLS: window.location.hostname, //"192.168.1.10"
+					ipSLS: "192.168.1.10", //window.location.hostname
 					width: 0,
                 }
             },
@@ -441,10 +446,20 @@
 						)
 				},
 
-				changeState(ieee, prop, e){
+				changeState(ieee, prop, type, e){
 					console.log("change State device "+ieee+' '+prop)
-					var value_state = e.target.checked ? 'ON' : 'OFF' //this.devices_status[prop+ieee]
-					console.log(e.target.checked)
+					if (type == "switch") {
+						var value_state = e.target.checked ? 'ON' : 'OFF' //this.devices_status[prop+ieee]
+						console.log(e.target.checked)
+					} else if (type == "dimmer") {
+						console.log(e.target.value)
+						var value_state = e.target.value
+						//var value_state = e
+					} else {
+						console.log("Оборудование не определено")
+						console.log(e.target.value)
+					}
+
 					fetch("http://"+this.ipSLS+"/api/zigbee?dev="+ieee+"&action=setState&name="+prop+"&value="+value_state, {
 						method: 'GET',
 					})
