@@ -26,8 +26,8 @@
     
 </head>
 <body>
-
-    <nav class="navbar fixed-top navbar-expand-lg navbar-dark" style="background-color: #1e88e5;">
+	<div class="row" id="app">
+    	<nav class="navbar fixed-top navbar-expand-lg navbar-dark" style="background-color: #1e88e5;">
 			<div class="container-fluid">
 				<a class="navbar-brand" href="/">SLS</a>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
@@ -135,7 +135,7 @@
 	</div>
 
     <div class="container-fluid flex-column">
-        <div class="row" id="app">
+        
 			<div class="d-grid gap-2 d-flex justify-content-end mb-2 fs-3">
 				<i @click="saveConfig()" class="bi bi-save-fill text-primary" :class="{'text-warning' : !save}"></i>
 				<i @click="showUI=!showUI" class="bi bi-gear-fill text-primary" :class="{'text-warning' : !showUI}"></i>
