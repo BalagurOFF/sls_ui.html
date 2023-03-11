@@ -27,7 +27,7 @@
 </head>
 <body>
 	<div id="app">
-    	<nav class="navbar fixed-top navbar-expand-lg navbar-dark" :class="[darkTheme? 'bg-secondary' : 'bg-primary']" >
+    	<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary" >
 			<div class="container-fluid">
 				<a class="navbar-brand" href="/">SLS</a>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
@@ -137,10 +137,8 @@
     <div class="container-fluid flex-column">
 		<div class="row">
 			<div class="d-grid gap-2 d-flex justify-content-end mb-2 fs-3">
-
-				<i @click="showUI=!showUI" class="bi bi-gear-fill text-primary" :class="{'text-warning' : !showUI}"></i>
 				<i @click="saveConfig()" class="bi bi-save-fill text-primary" :class="{'text-warning' : !save}"></i>
-
+				<i @click="showUI=!showUI" class="bi bi-gear-fill text-primary" :class="{'text-warning' : !showUI}"></i>
 			</div>
 			<template  v-if="showUI">
 				<div class="col-sm-12 col-md-6 col-xxl-4 pb-2" v-for="[room_key, room_value] in rooms"  :key="room_value">
@@ -198,12 +196,8 @@
 				</div>
 			</template>
 			<template v-else>
-				<div class="d-grid gap-2 d-flex form-check form-switch justify-content-end mb-2">
-					<input class="form-check-input" type="checkbox" v-model="darkTheme" @click="save = false">
-					Темная тема
-				</div>
 				<div class="col-12">
-					<table :class="[darkTheme ? 'table table-secondary table-sm table-striped' :'table table-sm table-striped']">
+					<table class="table table-sm table-striped">
 						<thead>
 							<tr>
 							  	<th >ID</th>
@@ -358,7 +352,6 @@
 					</datalist>
 				</div>
 			</template>
-			{{darkTheme}}
 		</div>
 		</div>
     </div>
@@ -375,9 +368,8 @@
 					config_device: {"id":"1"},
 					save: true,
 					idClear: null,
-					ipSLS: "192.168.1.10", //window.location.hostname
+					ipSLS: window.location.hostname, //"192.168.1.10"
 					width: 0,
-					darkTheme: false,
                 }
             },
 
@@ -397,12 +389,6 @@
 					})
         				.then(response => response.json())
 						.then(data => {
-							if (data.darkTheme != undefined) {
-								console.log("Цветовая тема: "+data.darkTheme)
-								this.darkTheme = data.darkTheme
-							} else {
-								this.darkTheme = false
-							}
 							console.log(data.devices.length)
 							if (data.devices.length>0) {
 								console.log("initial Devices")
@@ -516,8 +502,6 @@
 				saveConfig(){
 					var text = new Map()
 					text['devices'] = this.devices
-					text['darkTheme'] = this.darkTheme
-					console.log(text)
 					console.log(JSON.stringify(text))
 					fetch("http://"+this.ipSLS+"/api/storage?path=/uiconfig.json&plain="+JSON.stringify(text).replaceAll("%", "%25"), {
 						method: 'POST',
