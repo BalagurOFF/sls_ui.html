@@ -27,7 +27,7 @@
 </head>
 <body>
 	<div id="app">
-    	<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary" >
+    	<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary" :class="{'bg-dark' : darkTheme}">
 			<div class="container-fluid">
 				<a class="navbar-brand" href="/">SLS</a>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
@@ -142,7 +142,7 @@
 			</div>
 			<template  v-if="showUI">
 				<div class="col-sm-12 col-md-6 col-xxl-4 pb-2" v-for="[room_key, room_value] in rooms"  :key="room_value">
-				<div class="card h-100">
+				<div class="card h-100" :class="{'bg-dark  border-3 text-white' : darkTheme}">
 					<div class="card-header" >
 						<h4 class="text-center">{{ room_key }}</h4>
 					</div>
@@ -196,8 +196,12 @@
 				</div>
 			</template>
 			<template v-else>
+				<div class="d-grid gap-2 d-flex justify-content-end mb-2 form-check form-switch">
+					<input @click="changeTheme($event)" class="form-check-input" type="checkbox" v-model="darkTheme" id="darkTheme">
+					<label for="darkTheme">Тёмная тема</label>
+				</div>
 				<div class="col-12">
-					<table class="table table-sm table-striped">
+					<table class="table table-sm table-striped" :class="{'table-dark' : darkTheme}">
 						<thead>
 							<tr>
 							  	<th >ID</th>
@@ -368,8 +372,9 @@
 					config_device: {"id":"1"},
 					save: true,
 					idClear: null,
-					ipSLS: window.location.hostname, //"192.168.1.10"
+					ipSLS: "192.168.1.10", //window.location.hostname
 					width: 0,
+					darkTheme: false,
                 }
             },
 
@@ -521,6 +526,14 @@
 						return false
 					}
 				  },
+				changeTheme(e) {
+					if (e.target.checked) {
+						document.body.classList.add('bg-secondary')
+					}
+					else {
+						document.body.classList.remove('bg-secondary')
+					}
+				},
 			},
 
 			mounted(){
