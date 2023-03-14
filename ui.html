@@ -27,7 +27,7 @@
 </head>
 <body>
 	<div id="app">
-    	<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary" >
+    	<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary" :class="{'bg-dark' : darkTheme}">
 			<div class="container-fluid">
 				<a class="navbar-brand" href="/">SLS</a>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
@@ -99,7 +99,7 @@
 	<!-- Modal Zigbee reset --> 
 	<div class="modal fade" id="zb_reset_modal" tabindex="-1" aria-labelledby="zigbeeReset" aria-hidden="true">
 		<div class="modal-dialog">
-			<div class="modal-content">
+			<div class="modal-content" :class="{'bg-secondary text-white' : darkTheme}">
 				<div class="modal-header">
 					<h5 class="modal-title" id="zigbeeReset">Zigbee reset</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
@@ -109,7 +109,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-danger" onclick="location.href='/zigbee/reset';">Reset</button>
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>	
+					<button type="button" class="btn btn-secondary" :class="{'btn-dark' : darkTheme}" data-bs-dismiss="modal">Cancel</button>
 				</div>
 			</div>
 		</div>
@@ -118,7 +118,7 @@
 	<!-- Modal Reboot --> 
 	<div class="modal fade" id="reboot_modal" tabindex="-1" aria-labelledby="reboot" aria-hidden="true">
 		<div class="modal-dialog">
-			<div class="modal-content">
+			<div class="modal-content" :class="{'bg-secondary text-white' : darkTheme}">
 				<div class="modal-header">
 					<h5 class="modal-title" id="reboot">Reboot</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
@@ -128,7 +128,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-danger" onclick="location.href='/reboot';">Reboot</button>
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>	
+					<button type="button" class="btn btn-secondary" :class="{'btn-dark' : darkTheme}" data-bs-dismiss="modal">Cancel</button>
 				</div>
 			</div>
 		</div>
@@ -136,13 +136,13 @@
 
     <div class="container-fluid flex-column">
 		<div class="row">
-			<div class="d-grid gap-2 d-flex justify-content-end mb-2 fs-3">
-				<i @click="saveConfig()" class="bi bi-save-fill text-primary" :class="{'text-warning' : !save}"></i>
-				<i @click="showUI=!showUI" class="bi bi-gear-fill text-primary" :class="{'text-warning' : !showUI}"></i>
+			<div class="d-grid gap-2 d-flex justify-content-end mb-2 fs-3" :class="[darkTheme ? 'text-dark' : 'text-primary']">
+				<i @click="saveConfig()" class="bi bi-save-fill" :class="{'text-warning' : !save}"></i>
+				<i @click="showUI=!showUI" class="bi bi-gear-fill" :class="{'text-warning' : !showUI}"></i>
 			</div>
 			<template  v-if="showUI">
 				<div class="col-sm-12 col-md-6 col-xxl-4 pb-2" v-for="[room_key, room_value] in rooms"  :key="room_value">
-				<div class="card h-100">
+				<div class="card h-100" :class="{'bg-dark  border-3 text-white' : darkTheme}">
 					<div class="card-header" >
 						<h4 class="text-center">{{ room_key }}</h4>
 					</div>
@@ -196,8 +196,12 @@
 				</div>
 			</template>
 			<template v-else>
+				<div class="d-grid gap-2 d-flex justify-content-end mb-2 form-check form-switch">
+					<input @click="changeTheme($event)" class="form-check-input" type="checkbox" v-model="darkTheme" id="darkTheme">
+					<label for="darkTheme">Тёмная тема</label>
+				</div>
 				<div class="col-12">
-					<table class="table table-sm table-striped">
+					<table class="table table-sm table-striped" :class="{'table-dark' : darkTheme}">
 						<thead>
 							<tr>
 							  	<th >ID</th>
@@ -368,8 +372,9 @@
 					config_device: {"id":"1"},
 					save: true,
 					idClear: null,
-					ipSLS: window.location.hostname, //"192.168.1.10"
+					ipSLS: "192.168.1.10", //window.location.hostname
 					width: 0,
+					darkTheme: false,
                 }
             },
 
@@ -389,6 +394,12 @@
 					})
         				.then(response => response.json())
 						.then(data => {
+							if (data.darkTheme != undefined) {
+								this.darkTheme = data.darkTheme
+								if (data.darkTheme) {
+									document.body.classList.add('bg-secondary')
+								}
+							}
 							console.log(data.devices.length)
 							if (data.devices.length>0) {
 								console.log("initial Devices")
@@ -502,6 +513,7 @@
 				saveConfig(){
 					var text = new Map()
 					text['devices'] = this.devices
+					text['darkTheme'] = this.darkTheme
 					console.log(JSON.stringify(text))
 					fetch("http://"+this.ipSLS+"/api/storage?path=/uiconfig.json&plain="+JSON.stringify(text).replaceAll("%", "%25"), {
 						method: 'POST',
@@ -513,19 +525,28 @@
 				updateWidth() {
     				this.width = window.innerWidth;
   				},
-				  screenSize(){
+				screenSize(){
 					if (this.width>=1200){
 						return true
 					}
 					else {
 						return false
 					}
-				  },
+				},
+				changeTheme(e) {
+					if (e.target.checked) {
+						document.body.classList.add('bg-secondary')
+					}
+					else {
+						document.body.classList.remove('bg-secondary')
+					}
+					this.save = false
+				},
 			},
 
 			mounted(){
 				window.addEventListener('resize', this.updateWidth)
-      			let connection = new WebSocket("ws://"+this.ipSLS+":81/log")
+				let connection = new WebSocket("ws://"+this.ipSLS+":81/log")
 				connection.binaryType = 'blob'
       			connection.onmessage = (message) => {
 					const data = JSON.parse(message.data)
@@ -538,6 +559,7 @@
 				//	this.initialRooms()
 					this.initialDevices()
 					this.initialZigbee()
+
 					connection.send(JSON.stringify({
         				action: 'subscribe',
         				category: 'zigbee',
