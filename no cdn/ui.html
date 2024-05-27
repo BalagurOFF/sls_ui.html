@@ -153,9 +153,16 @@
 
     <div class="container-fluid flex-column">
 		<div class="row">
-			<div class="d-grid gap-2 d-flex justify-content-end mb-2 fs-3" :class="[darkTheme ? 'text-dark' : 'text-primary']">
-				<i @click="saveConfig()" class="bi bi-save-fill" :class="{'text-warning' : !save}"></i>
-				<i @click="showUI=!showUI" class="bi bi-gear-fill" :class="{'text-warning' : !showUI}"></i>
+			<div class="d-grid gap-2 d-flex justify-content-end mb-2 fs-2" :class="[darkTheme ? 'text-dark' : 'text-primary']">
+				<!--<template v-if="!save">
+					&#128190;
+				</template>
+				<template v-else>
+					&#128428;
+				</template> -->
+
+				<span @click="saveConfig()" class="" :class="{'text-warning' : !save}">&#128428;</span>
+				<span @click="showUI=!showUI" class="" :class="{'text-warning' : !showUI}" style="background-color: transparent;">&#128736;</span>
 			</div>
 
 			<template  v-if="showUI">
@@ -172,25 +179,24 @@
 								</div>
 								<div v-if="device.type =='switch'" :ref="device.prop+device.ieee" class="col-5 col-sm-4 col-lg-3 form-check form-switch justify-content-start">								
 									<input @click="changeState(device.ieee, device.prop, 'switch', $event)" class="form-check-input" type="checkbox" v-model="devices_status[device.prop+device.ieee]" true-value="ON" false-value="OFF"> &nbsp; <!--:checked="devices_status[device.prop+device.ieee] === 'ON'"-->
-									<i :class="[device.icon, { 'text-warning' : devices_status[device.prop+device.ieee] === 'ON'}]"></i>
+									<template v-if="devices_status[device.prop+device.ieee] === 'ON'">{{ device.icon_true}}</template><template v-else>{{ device.icon_false}}</template>
 								</div>
 								<div v-else-if="device.type =='sensor'" :ref="device.prop+device.ieee" class="col-5 col-sm-4 col-lg-3 form-check form-switch p-0 justify-content-start">
 									{{ devices_status[device.prop+device.ieee] }} {{ device.unit }}
-									<i :class="[device.icon]"></i>
+									{{ device.icon_true}}
 								</div>
 								<div v-else-if="device.type =='bin-sensor'" :ref="device.prop+device.ieee" class="col-5 col-sm-4 col-lg-3 form-check form-switch p-0 justify-content-start">
 									<template v-if="devices_status[device.prop+device.ieee]">
-										{{ device.true }}&nbsp;
+										{{ device.true }}&nbsp;{{ device.icon_true }}
 									</template> 
 									<template v-else-if="devices_status[device.prop+device.ieee]==false">
-										{{ device.false }}&nbsp;
+										{{ device.false }}&nbsp;{{ device.icon_false }}
 									</template>
 									<template v-else>
 										Не определено&nbsp;
 									</template>
-									<i :class="[device.icon, { 'text-danger' : devices_status[device.prop+device.ieee] == true}]"></i>
 								</div>
-								<div v-else-if="device.type =='bin-sensor-door'" :ref="device.prop+device.ieee" class="col-5 col-sm-4 col-lg-3 form-check form-switch p-0 justify-content-start">
+								<!--<div v-else-if="device.type =='bin-sensor-door'" :ref="device.prop+device.ieee" class="col-5 col-sm-4 col-lg-3 form-check form-switch p-0 justify-content-start">
 									<template v-if="devices_status[device.prop+device.ieee]">
 										{{ device.true }}&nbsp;
 									</template> 
@@ -202,13 +208,13 @@
 										Не определено&nbsp;
 									</template>
 									<i :class="[device.icon, { 'bi-door-closed-fill' : devices_status[device.prop+device.ieee] == true}, { 'bi-door-open-fill text-warning' : devices_status[device.prop+device.ieee] == false}]"></i>
-								</div>
+								</div>-->
 								<div v-else-if="device.type =='dimmer'" :ref="device.prop+device.ieee" class="col-5 col-sm-4 col-lg-3 form-check form-switch p-0 justify-content-start">
 									<input type="range" @change="changeState(device.ieee, device.prop, 'dimmer', $event)" :min="device.false" :max="device[true]" class="form-range" v-model="devices_status[device.prop+device.ieee]" >
 								</div>
 								<div v-else-if="device.type =='unixtime'" :ref="device.prop+device.ieee" class="col-5 col-sm-4 col-lg-3 form-check form-switch p-0 justify-content-start">
 									{{ unixtime(devices_status[device.prop+device.ieee]) }}
-									<i :class="[device.icon]"></i>
+									{{ device.icon_true}}
 								</div>
 							</div>
 							
@@ -234,9 +240,10 @@
 							  	<th class="d-none d-sm-table-cell">Состояния</th>
 							  	<th class="d-none d-md-table-cell">Описание</th>
 							  	<th class="d-none d-lg-table-cell">Тип</th>
-							  	<th class="d-none d-xl-table-cell">Иконка</th>
 							  	<th class="d-none d-xl-table-cell">Значение true</th>
+								<th class="d-none d-xl-table-cell">Иконка true</th>
 							  	<th class="d-none d-xl-table-cell">Значение false</th>
+								<th class="d-none d-xl-table-cell">Иконка false</th>
 								<th class="d-none d-xl-table-cell">Единица измерения</th>
 								<th width="50"></th>
 
@@ -250,11 +257,12 @@
 							  	<td class="d-none d-sm-table-cell">{{device.prop}}</td>
 							  	<td class="d-none d-md-table-cell">{{device.title}}</td>
 								<td class="d-none d-lg-table-cell">{{device.type}}</td>
-							  	<td class="d-none d-xl-table-cell">{{device.icon}}</td>
 							  	<td class="d-none d-xl-table-cell">{{device.true}}</td>
+								<td class="d-none d-xl-table-cell">{{device.icon_true}}</td>
 								<td class="d-none d-xl-table-cell">{{device.false}}</td>
+								<td class="d-none d-xl-table-cell">{{device.icon_false}}</td>
 								<td class="d-none d-xl-table-cell">{{device.unit}}</td>
-							  	<td width="50"><i class="bi bi-trash3-fill" @click="removeDevice(device.id)"></i>&nbsp;<i class="bi bi-wrench" @click="formFilling(device.id)"></i></td>
+							  	<td width="50"><span @click="removeDevice(device.id)">&#128465;</span>&nbsp;<span @click="formFilling(device.id)">&#128736;</span></td>
 							</tr>
 							<tr v-if="screenSize()">
 								<th scope="row"><input class="form-control form-control-sm" size="1" type="text" disabled v-model="config_device.id"></th>
@@ -263,11 +271,12 @@
 								<td><input type="text" class="form-control form-control-sm" list="states" v-model="config_device.prop" title="Выбирается из свойств устройства"></td>
 								<td><input type="text" class="form-control form-control-sm" v-model="config_device.title" title="название свойства устройства, которое будет отображатся в интерфейсе"></td>
 								<td><input type="text" class="form-control form-control-sm" list="types" v-model="config_device.type" title="Тип устройства. Пока только переключатель (switch), бинарный сенсор (bin-sensor), бинарный сенсор - дверь (bin-sensor-door) и сенсор отображающий значение с устройства"></td>
-								<td><input type="text" class="form-control form-control-sm" v-model="config_device.icon" title="Иконки. Брать с https://icons.getbootstrap.com/"></td>
 								<td><input type="text" class="form-control form-control-sm" v-model="config_device.true" title="Отображаемое значение, когда бинарный сенсор активирован."></td>
+								<td><input type="text" class="form-control form-control-sm" list="icons" v-model="config_device.icon_true" title="Спецсимволы HTML"></td>
 								<td><input type="text" class="form-control form-control-sm" v-model="config_device.false" title="Отображаемое значение, когда бинарный сенсор деактивирован."></td>
+								<td><input type="text" class="form-control form-control-sm" list="icons" v-model="config_device.icon_false" title="Спецсимволы HTML"></td>
 								<td><input type="text" class="form-control form-control-sm" v-model="config_device.unit" title="Отображаемые единицы измерения"></td>
-								<td width="50"><i class="bi bi-plus-square-fill" @click="addDevice()"></i>&nbsp;<i class="bi bi-x-square-fill" @click="formClear()"></i></td>
+								<td width="50"><span @click="addDevice()">&#9989;</span>&nbsp;<span @click="formClear()">&#10060;</span></td>
 							</tr>
 						</tbody>
 					</table>
@@ -322,14 +331,6 @@
 									<div class="col-7">
 										<input type="text" size="10" class="form-control" id="config_device.type" aria-describedby="config_device.type" list="types" v-model="config_device.type" title="Тип устройства. Пока только переключатель (switch), бинарный сенсор (bin-sensor), бинарный сенсор - дверь (bin-sensor-door) и сенсор отображающий значение с устройства">
 									</div>
-								</div>
-								<div class="row pt-2">
-									<div class="col-5">
-										<label for="config_device.icon" class="d-xl-none col-form-label">Иконка: </label>
-									</div>
-									<div class="col-7">
-										<input type="text" size="20" class="form-control" id="config_device.icon" aria-describedby="config_device.icon" v-model="config_device.icon" title="Иконки. Брать с https://icons.getbootstrap.com/">
-									</div>
 								</div>	
 								<div class="row pt-2">
 									<div class="col-5">
@@ -338,6 +339,14 @@
 									<div class="col-7">
 										<input type="text" size="10" class="form-control" id="config_device.true" aria-describedby="config_device.true" v-model="config_device.true" title="Отображаемое значение, когда бинарный сенсор активирован">
 									</div>
+								</div>
+								<div class="row pt-2">
+									<div class="col-5">
+										<label for="config_device.icon" class="d-xl-none col-form-label">Иконка true: </label>
+									</div>
+									<div class="col-7">
+										<input type="text" size="20" class="form-control" id="config_device.icon_true" aria-describedby="config_device.icon_true" v-model="config_device.icon_true">
+									</div>
 								</div>	
 								<div class="row pt-2">
 									<div class="col-5">
@@ -345,6 +354,14 @@
 									</div>
 									<div class="col-7">
 										<input type="text" size="10" class="form-control" id="config_device.false" aria-describedby="config_device.false" v-model="config_device.false" title="Отображаемое значение, когда бинарный сенсор деактивирован">
+									</div>
+								</div>
+								<div class="row pt-2">
+									<div class="col-5">
+										<label for="config_device.icon" class="d-xl-none col-form-label">Иконка: </label>
+									</div>
+									<div class="col-7">
+										<input type="text" size="20" class="form-control" id="config_device.icon" aria-describedby="config_device.icon_false" v-model="config_device.icon_false">
 									</div>
 								</div>	
 								<div class="row pt-2">
@@ -373,11 +390,33 @@
 					</datalist>
 					<datalist id="types" >
 						<option value="bin-sensor">bin-sensor</option>
-						<option value="bin-sensor-door">bin-sensor-door</option>
+						<!--<option value="bin-sensor-door">bin-sensor-door</option>-->
 						<option value="sensor">sensor</option>
 						<option value="switch">switch</option>
 						<option value="dimmer">dimmer</option>
 						<option value="unixtime">unixtime</option>
+					</datalist>
+					<datalist id="icons">
+						<option value="☀">Свет включен</option>
+						<option value="🔅">свет отключен</option>
+						<option value="🔒">Закрыто</option>
+						<option value="✇🌫">Вентилятор включен</option>
+						<option value="✇">Вентилятор отключен</option>
+						<option value="🔓">Открыто</option>
+						<option value="❌">FAIL</option>
+						<option value="✅">OK</option>
+						<option value="🕺">Движение</option>
+						<option value="🕘">Время</option>
+						<option value="🆓">Свободно</option>
+						<option value="⛈️">Гроза</option>
+						<option value="❄️">Снег</option>
+						<option value="💧">Капля синяя</option>
+						<option value="💦">Капли</option>
+						<option value="🩸">Капля красная</option>
+						<option value="🚫💦">Отсутствие капель</option>
+						<option value="🔋">Батарея</option>
+						<option value="🌡">Температура</option>
+						<option value="🪫">Батарея красная</option>
 					</datalist>
 				</div>
 			</template>
@@ -397,7 +436,7 @@
 					config_device: {"id":"1"},
 					save: true,
 					idClear: null,
-					ipSLS: window.location.hostname, //"192.168.1.9"
+					ipSLS: "192.168.1.9", //window.location.hostname
 					width: 0,
 					darkTheme: false,
                 }
