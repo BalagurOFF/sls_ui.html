@@ -342,10 +342,10 @@
 								</div>
 								<div class="row pt-2">
 									<div class="col-5">
-										<label for="config_device.icon" class="d-xl-none col-form-label">Иконка true: </label>
+										<label for="config_device.icon_true" class="d-xl-none col-form-label">Иконка true: </label>
 									</div>
 									<div class="col-7">
-										<input type="text" size="20" class="form-control" id="config_device.icon_true" aria-describedby="config_device.icon_true" v-model="config_device.icon_true">
+										<input type="text" size="20" class="form-control" id="config_device.icon_true" aria-describedby="config_device.icon_true" list="icons" v-model="config_device.icon_true">
 									</div>
 								</div>	
 								<div class="row pt-2">
@@ -358,10 +358,10 @@
 								</div>
 								<div class="row pt-2">
 									<div class="col-5">
-										<label for="config_device.icon" class="d-xl-none col-form-label">Иконка: </label>
+										<label for="config_device.icon_false" class="d-xl-none col-form-label">Иконка false: </label>
 									</div>
 									<div class="col-7">
-										<input type="text" size="20" class="form-control" id="config_device.icon" aria-describedby="config_device.icon_false" v-model="config_device.icon_false">
+										<input type="text" size="20" class="form-control" id="config_device.icon_false" aria-describedby="config_device.icon_false" list="icons" v-model="config_device.icon_false">
 									</div>
 								</div>	
 								<div class="row pt-2">
@@ -436,7 +436,9 @@
 					config_device: {"id":"1"},
 					save: true,
 					idClear: null,
-					ipSLS: window.location.hostname, //"192.168.1.9"
+					hostSLS: window.location.hostname, //"192.168.1.9"window.location.hostname
+					webportSLS: window.location.port || ('80'),
+					websocketSLS: Number(window.location.port || ('80'))+1,
 					width: 0,
 					darkTheme: false,
                 }
@@ -453,7 +455,7 @@
 
 			methods: {
 				initialDevices(){
-					fetch("http://"+this.ipSLS+"/api/storage?path=uiconfig.json", {
+					fetch('http://'+this.hostSLS+':'+this.webportSLS+'/api/storage?path=uiconfig.json', {
 						method: 'GET',
 					})
         				.then(response => response.json())
@@ -503,7 +505,7 @@
 				},
 				initialZigbee() {
 					console.log("initialZigbee")
-					fetch("http://"+this.ipSLS+"/api/zigbee/devices", {
+					fetch('http://'+this.hostSLS+':'+this.webportSLS+'/api/zigbee/devices', {
 						method: 'GET',
 					})
         				.then(response => response.json())
@@ -535,7 +537,7 @@
 						console.log(e.target.value)
 					}
 
-					fetch("http://"+this.ipSLS+"/api/zigbee?dev="+ieee+"&action=setState&name="+prop+"&value="+value_state, {
+					fetch('http://'+this.hostSLS+':'+this.webportSLS+'/api/zigbee?dev='+ieee+'&action=setState&name='+prop+'&value='+value_state, {
 						method: 'GET',
 					})
 				},	
@@ -579,7 +581,7 @@
 					text['devices'] = this.devices
 					text['darkTheme'] = this.darkTheme
 					console.log(JSON.stringify(text))
-					fetch("http://"+this.ipSLS+"/api/storage?path=/uiconfig.json&plain="+JSON.stringify(text).replaceAll("%", "%25"), {
+					fetch('http://'+this.hostSLS+':'+this.webportSLS+'/api/storage?path=/uiconfig.json&plain='+JSON.stringify(text).replaceAll("%", "%25"), {
 						method: 'POST',
 					})
         				.then(response => response.json())
@@ -612,8 +614,11 @@
 			},
 
 			mounted(){
+				console.log(this.hostSLS)
+				console.log(this.webportSLS)
+				console.log(this.websocketSLS)
 				window.addEventListener('resize', this.updateWidth)
-				let connection = new WebSocket("ws://"+this.ipSLS+":81/log")
+				let connection = new WebSocket('ws://'+this.hostSLS+':'+this.websocketSLS+'/log')
 				connection.binaryType = 'blob'
       			connection.onmessage = (message) => {
 					const data = JSON.parse(message.data)
