@@ -262,7 +262,7 @@
 								<td class="d-none d-xl-table-cell">{{device.false}}</td>
 								<td class="d-none d-xl-table-cell">{{device.icon_false}}</td>
 								<td class="d-none d-xl-table-cell">{{device.unit}}</td>
-							  	<td width="50"><span @click="removeDevice(device.id)">&#128465;</span>&nbsp;<span @click="formFilling(device.id)">&#128736;</span></td>
+							  	<td width="50"><span @click="formFilling(device.id)">&#128736;</span>&nbsp;<span @click="removeDevice(device.id)">&#128465;</span></td>
 							</tr>
 							<tr v-if="screenSize()">
 								<th scope="row"><input class="form-control form-control-sm" size="1" type="text" disabled v-model="config_device.id"></th>
