@@ -179,19 +179,6 @@
 									</template>
 									
 								</div>
-								<!--<div v-else-if="device.type =='bin-sensor-door'" :ref="device.prop+device.ieee" class="col-5 col-sm-4 col-lg-3 form-check form-switch p-0 justify-content-start">
-									<template v-if="devices_status[device.prop+device.ieee]">
-										{{ device.true }}&nbsp;
-									</template> 
-									<template v-else-if="devices_status[device.prop+device.ieee]==false">
-										{{ device.false }}&nbsp;
-									</template>
-
-									<template v-else>
-										Не определено&nbsp;
-									</template>
-									<i :class="[device.icon, { 'bi-door-closed-fill' : devices_status[device.prop+device.ieee] == true}, { 'bi-door-open-fill text-warning' : devices_status[device.prop+device.ieee] == false}]"></i>
-								</div>-->
 								<div v-else-if="device.type =='dimmer'" :ref="device.prop+device.ieee" class="col-5 col-sm-4 col-lg-3 form-check form-switch p-0 justify-content-start">
 									<input type="range" @change="changeState(device.ieee, device.prop, 'dimmer', $event)" :min="device.false" :max="device[true]" class="form-range" v-model="devices_status[device.prop+device.ieee]" >
 									<i :class="[device.icon_true]"></i>
@@ -219,6 +206,7 @@
 						<thead>
 							<tr>
 							  	<th >ID</th>
+								<th ></th>
 								<th class="d-none d-lg-table-cell">Комната</th>
 							  	<th >Устроуйство</th>
 							  	<th class="d-none d-sm-table-cell">Состояния</th>
@@ -234,8 +222,9 @@
 							</tr>
 						</thead>
 						<tbody >
-							<tr v-for="device in devices" :key="device.id">
+							<tr v-for="(device, index) in devices" :key="device.id">
 							  	<th scope="row" >{{device.id}}</th>
+								<td><i v-if="index != 0" class="bi bi-arrow-up-square-fill" @click="changePosition(index, index-1)"></i><i v-if="index != devices.length-1" class="bi bi-arrow-down-square-fill" @click="changePosition(index, index+1)"></i></td>
 								<td class="d-none d-lg-table-cell">{{device.room}}</td>
 							  	<td>{{device.ieee}}</td>
 							  	<td class="d-none d-sm-table-cell">{{device.prop}}</td>
@@ -250,6 +239,7 @@
 							</tr>
 							<tr v-if="screenSize()">
 								<th scope="row"><input class="form-control form-control-sm" size="1" type="text" disabled v-model="config_device.id"></th>
+								<td></td>
 								<td><input type="text" class="form-control form-control-sm" list="rooms" v-model="config_device.room" title="Название карточки (комнаты). Можно ввести вручную или можно выбрать из раннее введеных"></td>
 								<td><input type="text" class="form-control form-control-sm" list="devices" v-model="config_device.ieee" title="Выбирается из спаренных устройств"></td>
 								<td><input type="text" class="form-control form-control-sm" list="states" v-model="config_device.prop" title="Выбирается из свойств устройства"></td>
@@ -399,8 +389,8 @@
 					save: true,
 					idClear: null,
 					hostSLS: window.location.hostname, //"192.168.1.9"
-					webportSLS: window.location.port || ('80'),
-					websocketSLS: Number(window.location.port || ('80'))+1,
+					webportSLS: window.location.port || ('80'), //'80'
+					websocketSLS: Number(window.location.port || ('80'))+1,//'81'
 					width: 0,
 					darkTheme: false,
                 }
@@ -521,6 +511,10 @@
 					this.save = false
 				}, 
 
+				changePosition(index_up, index_down){
+					[this.devices[index_up], this.devices[index_down]] = [this.devices[index_down], this.devices[index_up]]
+					this.save = false
+				},
 				addDevice(){
 					if (this.devices.includes(this.config_device)) {
 						console.log("Замена устройства")
