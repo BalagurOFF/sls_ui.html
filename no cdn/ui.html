@@ -235,6 +235,7 @@
 						<thead>
 							<tr>
 							  	<th >ID</th>
+								<th></th>
 								<th class="d-none d-lg-table-cell">Комната</th>
 							  	<th >Устройство</th>
 							  	<th class="d-none d-sm-table-cell">Состояния</th>
@@ -250,8 +251,9 @@
 							</tr>
 						</thead>
 						<tbody >
-							<tr v-for="device in devices" :key="device.id">
+							<tr v-for="(device, index) in devices" :key="device.id">
 							  	<th scope="row" >{{device.id}}</th>
+								<td><span v-if="index != 0" @click="changePosition(index, index-1)">⬆️</span><span v-if="index != devices.length-1" @click="changePosition(index, index+1)">⬇️</span></td>
 								<td class="d-none d-lg-table-cell">{{device.room}}</td>
 							  	<td>{{device.ieee}}</td>
 							  	<td class="d-none d-sm-table-cell">{{device.prop}}</td>
@@ -418,6 +420,9 @@
 						<option value="🌡">Температура</option>
 						<option value="🪫">Батарея красная</option>
 						<option value="&#128293;">Огонь</option>
+						<option value="🔌">Вилка</option>
+						<option value="⚡">Высокое напряжение</option>
+						<option value="🔦">Фонарик</option>
 					</datalist>
 				</div>
 			</template>
@@ -438,8 +443,8 @@
 					save: true,
 					idClear: null,
 					hostSLS: window.location.hostname, //"192.168.1.9"
-					webportSLS: window.location.port || ('80'),
-					websocketSLS: Number(window.location.port || ('80'))+1,
+					webportSLS: window.location.port || ('80'), //'80'
+					websocketSLS: Number(window.location.port || ('80'))+1,//'81'
 					width: 0,
 					darkTheme: false,
                 }
@@ -559,7 +564,10 @@
 					this.devices = this.devices.filter(item => item.id != id)
 					this.save = false
 				}, 
-
+				changePosition(index_up, index_down){
+					[this.devices[index_up], this.devices[index_down]] = [this.devices[index_down], this.devices[index_up]]
+					this.save = false
+				},
 				addDevice(){
 					if (this.devices.includes(this.config_device)) {
 						console.log("Замена устройства")
